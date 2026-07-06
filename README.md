@@ -41,15 +41,15 @@ The project prioritizes:
 
 ---
 
-## Design Goals
-• Lightweight
-• Reliable
-• Highly configurable
-• Performance-oriented
-• Open source
-• Predictable behaviour
-• Minimal CPU usage
-• Zero dependencies beyond AutoHotkey
+## Design Goals  
+• Lightweight  
+• Reliable  
+• Highly configurable  
+• Performance-oriented  
+• Open source  
+• Predictable behaviour  
+• Minimal CPU usage  
+• Zero dependencies beyond AutoHotkey  
 
 ---
 
