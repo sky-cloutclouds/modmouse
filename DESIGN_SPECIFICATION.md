@@ -167,3 +167,35 @@ Its purpose is input enhancement.
 Future features should preserve the project's core philosophy.
 
 Complexity should only be introduced when justified by measurable benefit.
+
+
+### Reliability
+
+• ModMouse is state-driven.
+
+• ModMouse never silently changes user input.
+
+• Every state has an explicit exit path.
+
+• Recovery is automatic whenever possible.
+
+• Unexpected input sequences return ModMouse to Idle.
+
+• Reliability is prioritized over feature count.
+
+
+### Engineering Philosophy
+
+- One responsibility per module.
+
+- One responsibility per function.
+
+- No silent failures.
+
+- No hidden state.
+
+- No magic numbers.
+
+- Configuration is validated before execution.
+
+- Engine modules communicate through events rather than directly accessing hardware state.
