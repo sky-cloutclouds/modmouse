@@ -41,6 +41,18 @@ The project prioritizes:
 
 ---
 
+## Design Goals
+• Lightweight
+• Reliable
+• Highly configurable
+• Performance-oriented
+• Open source
+• Predictable behaviour
+• Minimal CPU usage
+• Zero dependencies beyond AutoHotkey
+
+---
+
 ## Design Philosophy
 
 ModMouse is intentionally built as a **single-file AutoHotkey application**.
