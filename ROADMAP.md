@@ -1,76 +1,168 @@
-# ModMouse Roadmap
+# ModMouse Development Roadmap
+
+This roadmap outlines the planned development of ModMouse from its initial architecture through future feature releases.
+
+> **Status Legend**
+>
+> - ⬜ Planned
+> - 🟨 In Progress
+> - ✅ Complete
 
 ---
 
-# v0.1.0
+# Phase 1 — Project Foundation
 
-Project foundation.
+Status: ✅ Complete
 
-## Goals
+## Repository
 
-- Repository creation
-- Documentation
-- Initial scrolling engine
-- Chording support
-- Basic configuration
+- ✅ Create GitHub repository
+- ✅ Choose project license (MIT)
+- ✅ Create README
+- ✅ Create Design Specification
+- ✅ Create Roadmap
+- ✅ Create Installation Guide
+- ✅ Create Changelog
 
----
+## Architecture
 
-# v0.2.0
-
-Configuration overhaul.
-
-## Planned
-
-- Configurable buttons
-- Configurable modifier key
-- Refactored scroll engine
-- Improved architecture
-- Reduced code duplication
+- ✅ Establish project structure
+- ✅ Define configuration API
+- ✅ Define coding conventions
+- ✅ Implement startup pipeline
+- ✅ Implement project skeleton
 
 ---
 
-# v0.3.0
+# Phase 2 — Core Engine
 
-Usability improvements.
+Status: ⬜ Planned
 
-## Planned
+## Milestone 2.1 — Configuration Validation
 
-- Debug mode
-- Multiple acceleration curves
-- Improved documentation
-- Better error handling
-
----
-
-# v0.4.0
-
-Advanced features.
-
-## Planned
-
-- Per-application profiles
-- Horizontal scrolling
-- Additional modifier layers
+- ⬜ Validate configuration values
+- ⬜ Validate timing parameters
+- ⬜ Validate modifier keys
+- ⬜ Validate mouse buttons
+- ⬜ Display descriptive configuration errors
 
 ---
 
-# v1.0.0
+## Milestone 2.2 — Input Manager
 
-Public release.
-
-## Goals
-
-- Stable API
-- Complete documentation
-- Thorough testing
-- Performance optimisation
-- Community feedback incorporated
+- ⬜ Detect modifier state
+- ⬜ Detect mouse button state
+- ⬜ Normalize input events
+- ⬜ Centralize hardware input
 
 ---
 
-# Long-Term Vision
+## Milestone 2.3 — State Machine
 
-ModMouse should remain a lightweight utility that enhances mouse interaction without sacrificing simplicity or performance.
+- ⬜ Implement Idle state
+- ⬜ Implement Scroll Up state
+- ⬜ Implement Scroll Down state
+- ⬜ Implement Chording state
+- ⬜ State transition validation
 
-Every new feature should reinforce that vision rather than expand the project beyond its intended scope.
+---
+
+## Milestone 2.4 — Event Dispatcher
+
+- ⬜ Route normalized events
+- ⬜ Notify engine modules
+- ⬜ Decouple input from features
+
+---
+
+## Milestone 2.5 — Debug System
+
+- ⬜ Optional debug logging
+- ⬜ State transition logging
+- ⬜ Input event logging
+
+---
+
+## Milestone 2.6 — Reliability
+
+- ⬜ Automatic recovery
+- ⬜ Emergency state reset
+- ⬜ Invalid state detection
+- ⬜ Runtime safeguards
+
+---
+
+# Phase 3 — Core Features
+
+Status: ⬜ Planned
+
+## Accelerated Scrolling
+
+- ⬜ Scroll acceleration
+- ⬜ Adjustable timing
+- ⬜ Smooth acceleration
+
+---
+
+## Mouse Chording
+
+- ⬜ Middle-click emulation
+- ⬜ Configurable output
+- ⬜ Configurable timing
+
+---
+
+## Compatibility Layer
+
+- ⬜ Browser compatibility
+- ⬜ Windows compatibility
+- ⬜ Application compatibility
+
+---
+
+# Phase 4 — Customization
+
+Status: ⬜ Planned
+
+## Profiles
+
+- ⬜ Multiple profiles
+- ⬜ Profile switching
+- ⬜ Profile import/export
+
+---
+
+## Configuration
+
+- ⬜ Expanded configuration
+- ⬜ Additional modifier keys
+- ⬜ Additional mouse actions
+
+---
+
+# Phase 5 — Future Expansion
+
+Status: ⬜ Planned
+
+Potential future additions.
+
+- ⬜ Horizontal scrolling
+- ⬜ Media controls
+- ⬜ Window management
+- ⬜ Productivity shortcuts
+- ⬜ CAD workflows
+- ⬜ Creative application workflows
+- ⬜ Plugin architecture (if justified)
+
+---
+
+# Ongoing Goals
+
+These goals apply to every phase of development.
+
+- Maintain predictable behaviour.
+- Prioritize reliability over feature count.
+- Minimize CPU usage.
+- Keep the codebase modular.
+- Avoid unnecessary complexity.
+- Preserve backwards compatibility where practical.
