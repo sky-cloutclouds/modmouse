@@ -1,6 +1,6 @@
 # ModMouse
 
-> A lightweight, high-performance AutoHotkey utility that enhances mouse input through configurable modifier layers, accelerated scrolling, and intelligent mouse-button chording.
+> A lightweight, reliable, and highly configurable mouse enhancement utility for AutoHotkey.
 
 ---
 
