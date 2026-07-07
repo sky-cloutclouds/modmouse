@@ -2,18 +2,21 @@
 ; Project      : ModMouse
 ; File         : ModMouse.ahk
 ; Version      : 0.1.0-dev
+; Status       : Development (Foundation Complete)
 ; Author       : Shaun Jacob
 ; License      : MIT
 ;
 ; Repository   : https://github.com/sky-cloutclouds/modmouse
 ;
 ; Description  :
-;     ModMouse is a lightweight AutoHotkey utility that enhances mouse interaction through configurable modifier
-;     layers, accelerated scrolling, and intelligent mouse-button chording.
+;     ModMouse is a lightweight AutoHotkey utility that enhances mouse interaction
+;     through configurable modifier layers, accelerated scrolling, and intelligent
+;     mouse-button chording.
 ;
 ; Philosophy   :
-;     Reliability takes priority over feature count. Every subsystem is designed to be deterministic,
-;     maintainable, and easy to understand. The codebase favors explicit behavior over hidden complexity.
+;     Reliability takes priority over feature count. Every subsystem is designed
+;     to be deterministic, maintainable, and easy to understand. The codebase
+;     favors explicit behavior over hidden complexity.
 ;
 ; ======================================================================================================================
 
@@ -27,7 +30,7 @@ SetBatchLines -1
 SendMode Input
 SetWorkingDir %A_ScriptDir%
 
-; Prevents Windows from activating the Alt menu while the script temporarily
+; Prevents Windows from activating the Alt menu while the engine temporarily
 ; manipulates the modifier state during input processing.
 #MenuMaskKey vk11
 
@@ -50,7 +53,7 @@ if (A_AhkVersion < "1.1.33")
 ; ----------------------------------------------------------------------------------------------------------------------
 ; Certain input operations require administrative privileges to function
 ; consistently across all applications. If the script is not already elevated,
-; it will automatically restart itself with administrator permissions.
+; it automatically restarts itself with administrator permissions.
 ; ======================================================================================================================
 
 if !A_IsAdmin
@@ -58,6 +61,24 @@ if !A_IsAdmin
     Run *RunAs "%A_ScriptFullPath%"
     ExitApp
 }
+
+; ======================================================================================================================
+; ENGINE CONSTANTS
+; ----------------------------------------------------------------------------------------------------------------------
+; Engine-wide constants shared across all ModMouse subsystems.
+;
+; Design Principle:
+;     Constants represent immutable values. Unlike the runtime object, these
+;     values never change while the engine is executing.
+; ======================================================================================================================
+
+; Current ModMouse engine version.
+global MM_Version := "0.1.0-dev"
+
+; Scroll direction identifiers.
+global MM_SCROLL_NONE := 0
+global MM_SCROLL_UP   := -1
+global MM_SCROLL_DOWN := 1
 
 ; ======================================================================================================================
 ; ENGINE RUNTIME
@@ -70,40 +91,48 @@ if !A_IsAdmin
 ;     global variables.
 ; ======================================================================================================================
 
-; Current ModMouse engine version.
-global MM_Version := "0.1.0-dev"
-
 ; Engine runtime container.
 global MM_Runtime := {}
 
-; Indicates whether engine initialization completed successfully.
-MM_Runtime.Initialized := false
+; Current lifecycle state of the engine.
+;
+; Possible values:
+;     Initializing
+;     Ready
+;     Suspended
+;     Shutdown
+MM_Runtime.EngineState := "Initializing"
 
 ; Indicates whether a scrolling operation is currently active.
 MM_Runtime.ScrollActive := false
 
 ; Current scrolling direction.
-;  1  = Down
-; -1  = Up
-;  0  = Idle
-MM_Runtime.ScrollDirection := 0
+MM_Runtime.ScrollDirection := MM_SCROLL_NONE
 
 ; Indicates whether the configured modifier key is currently held.
 MM_Runtime.ModifierPressed := false
 
-; Tracks whether the modifier was temporarily released by the compatibility layer.
+; Tracks whether the modifier was temporarily released by the
+; compatibility layer.
 MM_Runtime.ModifierReleased := false
 
 ; Indicates whether a mouse-button chord is currently active.
 MM_Runtime.ChordActive := false
 
 ; ======================================================================================================================
-; USER CONFIGURATION
+; ENGINE CONFIGURATION
 ; ----------------------------------------------------------------------------------------------------------------------
-; All user-adjustable behavior is defined within this section.
+; All engine configuration is defined within this section.
 ;
-; Future configuration validation will ensure values remain within supported
-; ranges before engine initialization begins.
+; Design Principle:
+;     Configuration represents the engine's behaviour, not its current state.
+;     Unlike the runtime object, configuration values remain constant during
+;     normal execution and are intended to be modified only by the user or
+;     future configuration management systems.
+;
+; Future Development:
+;     Configuration persistence, profile management, and runtime reloading will
+;     build upon this section without requiring architectural changes.
 ; ======================================================================================================================
 
 ; ----------------------------------------------------------------------------------------------------------------------
@@ -147,7 +176,7 @@ MM_Config_Scroll_AccelerationTime := 1500
 ; CHORDING
 ; ----------------------------------------------------------------------------------------------------------------------
 
-; Enables simultaneous button combinations.
+; Enables or disables mouse-button chording.
 MM_Config_Chord_Enabled := true
 
 ; Mouse button emitted when a valid chord is detected.
@@ -161,7 +190,7 @@ MM_Config_Chord_ClickDuration := 50
 ; ----------------------------------------------------------------------------------------------------------------------
 
 ; Temporarily releases the modifier key when required to avoid application-
-; specific conflicts (for example, browser zoom shortcuts).
+; specific conflicts (for example, browser navigation shortcuts).
 MM_Config_Compatibility_ReleaseModifier := true
 
 ; Enables Windows menu masking during synthetic Alt manipulation.
@@ -171,122 +200,19 @@ MM_Config_Compatibility_MenuMask := true
 ; DEBUG
 ; ----------------------------------------------------------------------------------------------------------------------
 
-; Enables future Diagnostics and development tools.
+; Enables future diagnostics and development tools.
 MM_Config_Debug_Enabled := false
 
 ; ======================================================================================================================
-; CONFIGURATION VALIDATION
+; ENGINE UTILITIES
 ; ----------------------------------------------------------------------------------------------------------------------
-; MM_ValidateConfiguration()
+; Common utility functions shared across the ModMouse engine.
 ;
-; Description:
-;     Validates all user configuration before the engine begins accepting input.
-;
-; Parameters:
-;     None.
-;
-; Returns:
-;     None.
-;
-; Notes:
-;     Validation is divided into subsystem-specific functions to keep the
-;     engine modular and maintainable. Each configuration category is
-;     responsible for validating its own settings.
+; Design Principle:
+;     Utility functions perform common engine operations that may be used by
+;     multiple subsystems. They should remain independent of any single
+;     subsystem and provide consistent behaviour throughout the engine.
 ; ======================================================================================================================
-
-MM_ValidateConfiguration()
-{
-
-    MM_ValidateInputConfiguration()
-    MM_ValidateScrollConfiguration()
-    MM_ValidateChordConfiguration()
-    MM_ValidateCompatibilityConfiguration()
-    MM_ValidateDebugConfiguration()
-
-}
-
-; ----------------------------------------------------------------------------------------------------------------------
-; INPUT CONFIGURATION VALIDATION
-; ----------------------------------------------------------------------------------------------------------------------
-
-MM_ValidateInputConfiguration()
-{
-    if (MM_Config_Input_ModifierKey = "")
-        MM_FatalError("Input_ModifierKey cannot be empty.")
-}
-
-; ----------------------------------------------------------------------------------------------------------------------
-; SCROLL CONFIGURATION VALIDATION
-; ----------------------------------------------------------------------------------------------------------------------
-
-MM_ValidateScrollConfiguration()
-{
-    if (MM_Config_Scroll_StartDelay < 0)
-        MM_FatalError("MM_Config_Scroll_StartDelay must be zero or greater.")
-
-    if (MM_Config_Scroll_MinimumDelay < 0)
-        MM_FatalError("Scroll_MinimumDelay must be zero or greater.")
-
-    if (MM_Config_Scroll_AccelerationTime <= 0)
-        MM_FatalError("Scroll_AccelerationTime must be greater than zero.")
-}
-
-; ----------------------------------------------------------------------------------------------------------------------
-; CHORD CONFIGURATION VALIDATION
-; ----------------------------------------------------------------------------------------------------------------------
-
-MM_ValidateChordConfiguration()
-{
-    if (MM_Config_Chord_ClickDuration < 0)
-        MM_FatalError("Chord_ClickDuration must be zero or greater.")
-}
-
-; ----------------------------------------------------------------------------------------------------------------------
-; COMPATIBILITY CONFIGURATION VALIDATION
-; ----------------------------------------------------------------------------------------------------------------------
-
-MM_ValidateCompatibilityConfiguration()
-{
-    ; Reserved for future validation rules.
-}
-
-; ----------------------------------------------------------------------------------------------------------------------
-; DEBUG CONFIGURATION VALIDATION
-; ----------------------------------------------------------------------------------------------------------------------
-
-MM_ValidateDebugConfiguration()
-{
-    ; Reserved for future validation rules.
-}
-
-; ======================================================================================================================
-; DIAGNOSTICS
-; ----------------------------------------------------------------------------------------------------------------------
-; MM_Log()
-;
-; Description:
-;     Provides centralized diagnostic services for ModMouse.
-;
-; Parameters:
-;     Message
-;         The message to write to the diagnostic backend.
-;
-; Returns:
-;     None.
-;
-; Notes:
-;     During early development, diagnostics are routed exclusively through
-;     OutputDebug. Future releases may additionally support log files,
-;     debugging consoles, or telemetry without requiring engine changes.
-; ======================================================================================================================
-
-MM_Log(Message)
-{
-    if (!MM_Config_Debug_Enabled)
-        return
-
-    OutputDebug, [ModMouse] %Message%
-}
 
 ; ----------------------------------------------------------------------------------------------------------------------
 ; MM_FatalError()
@@ -313,7 +239,141 @@ MM_FatalError(Message)
 }
 
 ; ======================================================================================================================
+; DIAGNOSTICS
+; ----------------------------------------------------------------------------------------------------------------------
+; Provides centralized diagnostic services for the ModMouse engine.
+;
+; Design Principle:
+;     Diagnostics observe engine behaviour without affecting program flow.
+;     Future logging backends can be introduced without requiring changes to
+;     the engine itself.
+; ======================================================================================================================
+
+; ----------------------------------------------------------------------------------------------------------------------
+; MM_Log()
+;
+; Description:
+;     Writes a diagnostic message to the active logging backend.
+;
+; Parameters:
+;     Message
+;         The message to record.
+;
+; Returns:
+;     None.
+;
+; Notes:
+;     During early development, diagnostics are routed exclusively through
+;     OutputDebug. Future releases may additionally support log files,
+;     debugging consoles, telemetry, and configurable logging levels.
+; ----------------------------------------------------------------------------------------------------------------------
+
+MM_Log(Message)
+{
+    if (!MM_Config_Debug_Enabled)
+        return
+
+    OutputDebug, [ModMouse] %Message%
+}
+
+; ======================================================================================================================
+; CONFIGURATION VALIDATION
+; ----------------------------------------------------------------------------------------------------------------------
+; Validates engine configuration before ModMouse begins accepting user input.
+;
+; Design Principle:
+;     Validation is divided into subsystem-specific functions to improve
+;     maintainability and simplify future expansion. Each configuration
+;     category is responsible for validating its own settings.
+; ======================================================================================================================
+
+; ----------------------------------------------------------------------------------------------------------------------
+; MM_ValidateConfiguration()
+;
+; Description:
+;     Executes all configuration validation routines.
+;
+; Parameters:
+;     None.
+;
+; Returns:
+;     None.
+; ----------------------------------------------------------------------------------------------------------------------
+
+MM_ValidateConfiguration()
+{
+    MM_ValidateInputConfiguration()
+    MM_ValidateScrollConfiguration()
+    MM_ValidateChordConfiguration()
+    MM_ValidateCompatibilityConfiguration()
+    MM_ValidateDebugConfiguration()
+}
+
+; ----------------------------------------------------------------------------------------------------------------------
+; INPUT CONFIGURATION VALIDATION
+; ----------------------------------------------------------------------------------------------------------------------
+
+MM_ValidateInputConfiguration()
+{
+    if (MM_Config_Input_ModifierKey = "")
+        MM_FatalError("MM_Config_Input_ModifierKey cannot be empty.")
+}
+
+; ----------------------------------------------------------------------------------------------------------------------
+; SCROLL CONFIGURATION VALIDATION
+; ----------------------------------------------------------------------------------------------------------------------
+
+MM_ValidateScrollConfiguration()
+{
+    if (MM_Config_Scroll_StartDelay < 0)
+        MM_FatalError("MM_Config_Scroll_StartDelay must be zero or greater.")
+
+    if (MM_Config_Scroll_MinimumDelay < 0)
+        MM_FatalError("MM_Config_Scroll_MinimumDelay must be zero or greater.")
+
+    if (MM_Config_Scroll_AccelerationTime <= 0)
+        MM_FatalError("MM_Config_Scroll_AccelerationTime must be greater than zero.")
+}
+
+; ----------------------------------------------------------------------------------------------------------------------
+; CHORD CONFIGURATION VALIDATION
+; ----------------------------------------------------------------------------------------------------------------------
+
+MM_ValidateChordConfiguration()
+{
+    if (MM_Config_Chord_ClickDuration < 0)
+        MM_FatalError("MM_Config_Chord_ClickDuration must be zero or greater.")
+}
+
+; ----------------------------------------------------------------------------------------------------------------------
+; COMPATIBILITY CONFIGURATION VALIDATION
+; ----------------------------------------------------------------------------------------------------------------------
+
+MM_ValidateCompatibilityConfiguration()
+{
+    ; Reserved for future validation rules.
+}
+
+; ----------------------------------------------------------------------------------------------------------------------
+; DEBUG CONFIGURATION VALIDATION
+; ----------------------------------------------------------------------------------------------------------------------
+
+MM_ValidateDebugConfiguration()
+{
+    ; Reserved for future validation rules.
+}
+
+; ======================================================================================================================
 ; ENGINE INITIALIZATION
+; ----------------------------------------------------------------------------------------------------------------------
+; Responsible for preparing the ModMouse engine before user input is accepted.
+;
+; Design Principle:
+;     Engine initialization follows a deterministic sequence. Every subsystem
+;     is initialized in a well-defined order to ensure predictable behaviour
+;     and simplify future expansion.
+; ======================================================================================================================
+
 ; ----------------------------------------------------------------------------------------------------------------------
 ; MM_Initialize()
 ;
@@ -326,13 +386,14 @@ MM_FatalError(Message)
 ;     2. Validate configuration.
 ;     3. Initialize runtime state.
 ;     4. Prepare engine subsystems.
+;     5. Transition the engine to the Ready state.
 ;
 ; Parameters:
 ;     None.
 ;
 ; Returns:
 ;     None.
-; ======================================================================================================================
+; ----------------------------------------------------------------------------------------------------------------------
 
 MM_Initialize()
 {
@@ -340,7 +401,7 @@ MM_Initialize()
 
     MM_ValidateConfiguration()
 
-    MM_Runtime.Initialized := true
+    MM_Runtime.EngineState := "Ready"
 
     MM_Log("Engine initialization complete.")
 }
@@ -348,10 +409,11 @@ MM_Initialize()
 ; ======================================================================================================================
 ; APPLICATION ENTRY POINT
 ; ----------------------------------------------------------------------------------------------------------------------
-; The engine is initialized before any runtime logic becomes active.
+; Execution begins here.
 ;
-; Execution remains here until every required subsystem has successfully
-; completed initialization.
+; The engine is initialized before any runtime logic becomes active. Future
+; development will register timers, hotkeys, and subsystem event handlers only
+; after successful engine initialization.
 ; ======================================================================================================================
 
 MM_Initialize()
