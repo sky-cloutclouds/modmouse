@@ -1,4 +1,8 @@
-# ModMouse Development Roadmap
+# ModMouse Roadmap
+
+> Planned milestones and future development goals.
+
+---
 
 This roadmap outlines the planned development of ModMouse from its initial architecture through future feature releases.
 
