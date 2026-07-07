@@ -437,3 +437,9 @@ The following features are intentionally excluded until justified.
 - GUI configuration editor
 - Cloud synchronization
 - Automatic updates
+
+---
+
+# Development Philosophy
+
+ModMouse is designed by eliminating entire categories of bugs through architecture rather than patching symptoms. Every subsystem should have one clearly defined responsibility, explicit inputs, explicit outputs, and predictable behavior. Reliability is achieved through simplicity, deterministic state management, and minimizing shared responsibility between modules.
