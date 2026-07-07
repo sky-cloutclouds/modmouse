@@ -196,7 +196,6 @@ MM_Config_Debug_Enabled := false
 
 MM_ValidateConfiguration()
 {
-    MM_Log("Validating configuration.")
 
     MM_ValidateInputConfiguration()
     MM_ValidateScrollConfiguration()
@@ -204,7 +203,6 @@ MM_ValidateConfiguration()
     MM_ValidateCompatibilityConfiguration()
     MM_ValidateDebugConfiguration()
 
-    MM_Log("Configuration validation complete.")
 }
 
 ; ----------------------------------------------------------------------------------------------------------------------
@@ -224,7 +222,7 @@ MM_ValidateInputConfiguration()
 MM_ValidateScrollConfiguration()
 {
     if (MM_Config_Scroll_StartDelay < 0)
-        MM_FatalError("Scroll_StartDelay must be zero or greater.")
+        MM_FatalError("MM_Config_Scroll_StartDelay must be zero or greater.")
 
     if (MM_Config_Scroll_MinimumDelay < 0)
         MM_FatalError("Scroll_MinimumDelay must be zero or greater.")
