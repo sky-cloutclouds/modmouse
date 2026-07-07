@@ -226,10 +226,13 @@ MM_ValidateConfiguration()
 
 MM_Initialize()
 {
+    MM_Log("Beginning engine initialization.")
+
     MM_ValidateConfiguration()
 
-    ; TODO:
-    ; Additional startup tasks will be implemented during future milestones.
+    MM_Runtime.Initialized := true
+
+    MM_Log("Engine initialization complete.")
 }
 
 ; ======================================================================================================================
@@ -244,3 +247,32 @@ MM_Initialize()
 MM_Initialize()
 
 return
+
+; ======================================================================================================================
+; LOGGING
+; ----------------------------------------------------------------------------------------------------------------------
+; MM_Log()
+;
+; Description:
+;     Provides a centralized logging interface for ModMouse.
+;
+; Parameters:
+;     Message
+;         The text to be written to the active logging backend.
+;
+; Returns:
+;     None.
+;
+; Notes:
+;     During early development this function writes only to OutputDebug.
+;     Future milestones may expand logging to files, consoles, or diagnostic
+;     interfaces without changing engine code.
+; ======================================================================================================================
+
+MM_Log(Message)
+{
+    if (!MM_Config_Debug_Enabled)
+        return
+
+    OutputDebug, [ModMouse] %Message%
+}
