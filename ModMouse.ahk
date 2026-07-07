@@ -70,7 +70,7 @@ if !A_IsAdmin
 ; ======================================================================================================================
 
 ; Current development version.
-global Script_Version := "0.1.0-dev"
+global MM_Version := "0.1.0-dev"
 
 ; Tracks whether the configured modifier key has been programmatically released.
 ; This prevents Windows from interpreting synthetic key releases as genuine input.
