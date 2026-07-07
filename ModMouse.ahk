@@ -270,6 +270,8 @@ MM_FatalError(Message)
 
 MM_Log(Message)
 {
+    global MM_Config_Debug_Enabled
+
     if (!MM_Config_Debug_Enabled)
         return
 
@@ -315,6 +317,8 @@ MM_ValidateConfiguration()
 
 MM_ValidateInputConfiguration()
 {
+    global MM_Config_Input_ModifierKey
+
     if (MM_Config_Input_ModifierKey = "")
         MM_FatalError("MM_Config_Input_ModifierKey cannot be empty.")
 }
@@ -325,6 +329,10 @@ MM_ValidateInputConfiguration()
 
 MM_ValidateScrollConfiguration()
 {
+    global MM_Config_Scroll_StartDelay
+    global MM_Config_Scroll_MinimumDelay
+    global MM_Config_Scroll_AccelerationTime
+
     if (MM_Config_Scroll_StartDelay < 0)
         MM_FatalError("MM_Config_Scroll_StartDelay must be zero or greater.")
 
@@ -341,6 +349,8 @@ MM_ValidateScrollConfiguration()
 
 MM_ValidateChordConfiguration()
 {
+    global MM_Config_Chord_ClickDuration
+
     if (MM_Config_Chord_ClickDuration < 0)
         MM_FatalError("MM_Config_Chord_ClickDuration must be zero or greater.")
 }
@@ -397,6 +407,9 @@ MM_ValidateDebugConfiguration()
 
 MM_Initialize()
 {
+    global MM_Version
+    global MM_Runtime
+
     MM_Log("ModMouse " . MM_Version . " starting.")
 
     MM_ValidateConfiguration()
