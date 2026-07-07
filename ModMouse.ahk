@@ -60,9 +60,9 @@ if !A_IsAdmin
 }
 
 ; ======================================================================================================================
-; RUNTIME STATE
+; ENGINE RUNTIME
 ; ----------------------------------------------------------------------------------------------------------------------
-; The runtime state object stores all mutable engine data.
+; The ENGINE RUNTIME object stores all mutable state used by the engine.
 ;
 ; Design Principle:
 ;     The runtime object is the engine's single source of truth. Subsystems
@@ -70,10 +70,10 @@ if !A_IsAdmin
 ;     global variables.
 ; ======================================================================================================================
 
-; Current engine version.
+; Current ModMouse engine version.
 global MM_Version := "0.1.0-dev"
 
-; Runtime state container.
+; ENGINE RUNTIME container.
 global MM_Runtime := {}
 
 ; Indicates whether engine initialization completed successfully.
@@ -97,8 +97,6 @@ MM_Runtime.ModifierReleased := false
 ; Indicates whether a mouse-button chord is currently active.
 MM_Runtime.ChordActive := false
 
-; Enables future debug logging without modifying engine code.
-MM_Runtime.DebugEnabled := false
 
 ; ======================================================================================================================
 ; USER CONFIGURATION
@@ -115,49 +113,49 @@ MM_Runtime.DebugEnabled := false
 
 ; Configuration schema version.
 ; Incremented whenever breaking configuration changes are introduced.
-Config_Version := 1
+MM_Config_Version := 1
 
 ; ----------------------------------------------------------------------------------------------------------------------
 ; INPUT
 ; ----------------------------------------------------------------------------------------------------------------------
 
 ; Modifier key used to activate the alternate mouse layer.
-Input_ModifierKey := "Alt"
+MM_Config_Input_ModifierKey := "Alt"
 
 ; Mouse button responsible for downward scrolling.
-Input_ScrollDownButton := "XButton1"
+MM_Config_Input_ScrollDownButton := "XButton1"
 
 ; Mouse button responsible for upward scrolling.
-Input_ScrollUpButton := "XButton2"
+MM_Config_Input_ScrollUpButton := "XButton2"
 
 ; ----------------------------------------------------------------------------------------------------------------------
 ; SCROLLING
 ; ----------------------------------------------------------------------------------------------------------------------
 
 ; Enables or disables scroll acceleration.
-Scroll_AccelerationEnabled := true
+MM_Config_Scroll_AccelerationEnabled := true
 
 ; Initial delay (milliseconds) before acceleration begins.
-Scroll_StartDelay := 120
+MM_Config_Scroll_StartDelay := 120
 
 ; Fastest allowable scroll interval once maximum acceleration is reached.
-Scroll_MinimumDelay := 30
+MM_Config_Scroll_MinimumDelay := 30
 
 ; Time (milliseconds) required to reach maximum scrolling speed.
-Scroll_AccelerationTime := 1500
+MM_Config_Scroll_AccelerationTime := 1500
 
 ; ----------------------------------------------------------------------------------------------------------------------
 ; CHORDING
 ; ----------------------------------------------------------------------------------------------------------------------
 
 ; Enables simultaneous button combinations.
-Chord_Enabled := true
+MM_Config_Chord_Enabled := true
 
 ; Mouse button emitted when a valid chord is detected.
-Chord_OutputButton := "MButton"
+MM_Config_Chord_OutputButton := "MButton"
 
 ; Duration (milliseconds) of the simulated button press.
-Chord_ClickDuration := 50
+MM_Config_Chord_ClickDuration := 50
 
 ; ----------------------------------------------------------------------------------------------------------------------
 ; COMPATIBILITY
@@ -165,17 +163,17 @@ Chord_ClickDuration := 50
 
 ; Temporarily releases the modifier key when required to avoid application-
 ; specific conflicts (for example, browser zoom shortcuts).
-Compatibility_ReleaseModifier := true
+MM_Config_Compatibility_ReleaseModifier := true
 
 ; Enables Windows menu masking during synthetic Alt manipulation.
-Compatibility_MenuMask := true
+MM_Config_Compatibility_MenuMask := true
 
 ; ----------------------------------------------------------------------------------------------------------------------
 ; DEBUG
 ; ----------------------------------------------------------------------------------------------------------------------
 
 ; Enables future diagnostic logging and development tools.
-Debug_Enabled := false
+MM_Config_Debug_Enabled := false
 
 ; ======================================================================================================================
 ; CONFIGURATION VALIDATION
@@ -213,7 +211,7 @@ MM_ValidateConfiguration()
 ;
 ; Initialization Order:
 ;     1. Validate configuration.
-;     2. Initialize runtime state.
+;     2. Initialize ENGINE RUNTIME.
 ;     3. Initialize engine subsystems.
 ;     4. Register input handlers.
 ;
