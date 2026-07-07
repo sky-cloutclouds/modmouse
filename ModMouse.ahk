@@ -171,7 +171,7 @@ MM_Config_Compatibility_MenuMask := true
 ; DEBUG
 ; ----------------------------------------------------------------------------------------------------------------------
 
-; Enables future diagnostic logging and development tools.
+; Enables future Diagnostics and development tools.
 MM_Config_Debug_Enabled := false
 
 ; ======================================================================================================================
@@ -180,8 +180,7 @@ MM_Config_Debug_Enabled := false
 ; MM_ValidateConfiguration()
 ;
 ; Description:
-;     Ensures all configuration values are valid before the engine begins
-;     processing input.
+;     Validates all user configuration before the engine begins accepting input.
 ;
 ; Parameters:
 ;     None.
@@ -190,35 +189,97 @@ MM_Config_Debug_Enabled := false
 ;     None.
 ;
 ; Notes:
-;     Phase 1 provides the function stub only. Validation rules will be
-;     implemented during future development milestones.
+;     Validation is divided into subsystem-specific functions to keep the
+;     engine modular and maintainable. Each configuration category is
+;     responsible for validating its own settings.
 ; ======================================================================================================================
 
 MM_ValidateConfiguration()
 {
-    ; TODO:
-    ; Implement configuration validation.
+    MM_Log("Validating configuration.")
+
+    MM_ValidateInputConfiguration()
+    MM_ValidateScrollConfiguration()
+    MM_ValidateChordConfiguration()
+    MM_ValidateCompatibilityConfiguration()
+    MM_ValidateDebugConfiguration()
+
+    MM_Log("Configuration validation complete.")
+}
+
+; ----------------------------------------------------------------------------------------------------------------------
+; INPUT CONFIGURATION VALIDATION
+; ----------------------------------------------------------------------------------------------------------------------
+
+MM_ValidateInputConfiguration()
+{
+    if (MM_Config_Input_ModifierKey = "")
+        MM_FatalError("Input_ModifierKey cannot be empty.")
+}
+
+; ----------------------------------------------------------------------------------------------------------------------
+; SCROLL CONFIGURATION VALIDATION
+; ----------------------------------------------------------------------------------------------------------------------
+
+MM_ValidateScrollConfiguration()
+{
+    if (MM_Config_Scroll_StartDelay < 0)
+        MM_FatalError("Scroll_StartDelay must be zero or greater.")
+
+    if (MM_Config_Scroll_MinimumDelay < 0)
+        MM_FatalError("Scroll_MinimumDelay must be zero or greater.")
+
+    if (MM_Config_Scroll_AccelerationTime <= 0)
+        MM_FatalError("Scroll_AccelerationTime must be greater than zero.")
+}
+
+; ----------------------------------------------------------------------------------------------------------------------
+; CHORD CONFIGURATION VALIDATION
+; ----------------------------------------------------------------------------------------------------------------------
+
+MM_ValidateChordConfiguration()
+{
+    if (MM_Config_Chord_ClickDuration < 0)
+        MM_FatalError("Chord_ClickDuration must be zero or greater.")
+}
+
+; ----------------------------------------------------------------------------------------------------------------------
+; COMPATIBILITY CONFIGURATION VALIDATION
+; ----------------------------------------------------------------------------------------------------------------------
+
+MM_ValidateCompatibilityConfiguration()
+{
+    ; Reserved for future validation rules.
+}
+
+; ----------------------------------------------------------------------------------------------------------------------
+; DEBUG CONFIGURATION VALIDATION
+; ----------------------------------------------------------------------------------------------------------------------
+
+MM_ValidateDebugConfiguration()
+{
+    ; Reserved for future validation rules.
 }
 
 ; ======================================================================================================================
-; LOGGING
+; DIAGNOSTICS
 ; ----------------------------------------------------------------------------------------------------------------------
 ; MM_Log()
 ;
 ; Description:
-;     Provides a centralized logging interface for ModMouse.
+;     Provides centralized diagnostic services for ModMouse.
 ;
 ; Parameters:
 ;     Message
-;         The text to be written to the active logging backend.
+;         The message to write to the diagnostic backend.
 ;
 ; Returns:
 ;     None.
 ;
 ; Notes:
-;     During early development this function writes only to OutputDebug.
-;     Future milestones may expand logging to files, consoles, or diagnostic
-;     interfaces without changing engine code.
+;     During early development, diagnostics are routed exclusively through
+;     OutputDebug. Future releases may additionally support log files,
+;     debugging consoles, or telemetry without requiring engine changes.
 ; ======================================================================================================================
 
 MM_Log(Message)
@@ -229,28 +290,50 @@ MM_Log(Message)
     OutputDebug, [ModMouse] %Message%
 }
 
+; ----------------------------------------------------------------------------------------------------------------------
+; MM_FatalError()
+;
+; Description:
+;     Reports a fatal engine error and safely terminates ModMouse.
+;
+; Parameters:
+;     Message
+;         A human-readable description of the fatal error.
+;
+; Returns:
+;     None.
+;
+; Notes:
+;     All unrecoverable engine failures should be routed through this
+;     function to ensure consistent behaviour and future extensibility.
+; ----------------------------------------------------------------------------------------------------------------------
+
+MM_FatalError(Message)
+{
+    MsgBox, 16, ModMouse, %Message%
+    ExitApp
+}
+
 ; ======================================================================================================================
 ; ENGINE INITIALIZATION
 ; ----------------------------------------------------------------------------------------------------------------------
 ; MM_Initialize()
 ;
 ; Description:
-;     Performs all startup tasks required before ModMouse begins accepting input.
+;     Performs all startup tasks required before ModMouse begins accepting
+;     user input.
 ;
 ; Initialization Order:
-;     1. Validate configuration.
-;     2. Initialize the engine runtime.
-;     3. Initialize engine subsystems.
-;     4. Register input handlers.
+;     1. Log engine startup.
+;     2. Validate configuration.
+;     3. Initialize runtime state.
+;     4. Prepare engine subsystems.
 ;
 ; Parameters:
 ;     None.
 ;
 ; Returns:
 ;     None.
-;
-; Notes:
-;     Only configuration validation is performed during Phase 1.
 ; ======================================================================================================================
 
 MM_Initialize()
