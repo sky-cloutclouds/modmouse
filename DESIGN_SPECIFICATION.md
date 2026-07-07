@@ -1,5 +1,9 @@
 # ModMouse Design Specification
 
+> Defines the architecture, engineering principles, and implementation details of ModMouse.
+
+---
+
 Version: 1.0
 
 ---
