@@ -60,25 +60,45 @@ if !A_IsAdmin
 }
 
 ; ======================================================================================================================
-; GLOBAL STATE
+; RUNTIME STATE
 ; ----------------------------------------------------------------------------------------------------------------------
-; These variables represent the engine's current runtime state.
+; The runtime state object stores all mutable engine data.
 ;
-; NOTE:
-;     During later development this section will evolve into a dedicated runtime
-;     state object. It remains intentionally minimal during Phase 1.
+; Design Principle:
+;     The runtime object is the engine's single source of truth. Subsystems
+;     communicate by updating this object rather than creating independent
+;     global variables.
 ; ======================================================================================================================
 
-; Current development version.
+; Current engine version.
 global MM_Version := "0.1.0-dev"
 
-; Tracks whether the configured modifier key has been programmatically released.
-; This prevents Windows from interpreting synthetic key releases as genuine input.
-global ModifierReleased := false
+; Runtime state container.
+global MM_Runtime := {}
 
-; Indicates whether the scrolling engine is currently generating wheel events.
-; Used to prevent overlapping scrolling operations.
-global ScrollActive := false
+; Indicates whether engine initialization completed successfully.
+MM_Runtime.Initialized := false
+
+; Indicates whether a scrolling operation is currently active.
+MM_Runtime.ScrollActive := false
+
+; Current scrolling direction.
+;  1  = Down
+; -1  = Up
+;  0  = Idle
+MM_Runtime.ScrollDirection := 0
+
+; Indicates whether the configured modifier key is currently held.
+MM_Runtime.ModifierPressed := false
+
+; Tracks whether the modifier was temporarily released by the compatibility layer.
+MM_Runtime.ModifierReleased := false
+
+; Indicates whether a mouse-button chord is currently active.
+MM_Runtime.ChordActive := false
+
+; Enables future debug logging without modifying engine code.
+MM_Runtime.DebugEnabled := false
 
 ; ======================================================================================================================
 ; USER CONFIGURATION
@@ -160,7 +180,7 @@ Debug_Enabled := false
 ; ======================================================================================================================
 ; CONFIGURATION VALIDATION
 ; ----------------------------------------------------------------------------------------------------------------------
-; ValidateConfiguration()
+; MM_ValidateConfiguration()
 ;
 ; Description:
 ;     Ensures all configuration values are valid before the engine begins
@@ -177,7 +197,7 @@ Debug_Enabled := false
 ;     implemented during future development milestones.
 ; ======================================================================================================================
 
-ValidateConfiguration()
+MM_ValidateConfiguration()
 {
     ; TODO:
     ; Implement configuration validation.
@@ -186,7 +206,7 @@ ValidateConfiguration()
 ; ======================================================================================================================
 ; ENGINE INITIALIZATION
 ; ----------------------------------------------------------------------------------------------------------------------
-; Initialize()
+; MM_Initialize()
 ;
 ; Description:
 ;     Performs all startup tasks required before ModMouse begins accepting input.
@@ -207,9 +227,9 @@ ValidateConfiguration()
 ;     Only configuration validation is performed during Phase 1.
 ; ======================================================================================================================
 
-Initialize()
+MM_Initialize()
 {
-    ValidateConfiguration()
+    MM_ValidateConfiguration()
 
     ; TODO:
     ; Additional startup tasks will be implemented during future milestones.
@@ -224,6 +244,6 @@ Initialize()
 ; completed initialization.
 ; ======================================================================================================================
 
-Initialize()
+MM_Initialize()
 
 return
