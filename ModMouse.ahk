@@ -62,7 +62,7 @@ if !A_IsAdmin
 ; ======================================================================================================================
 ; ENGINE RUNTIME
 ; ----------------------------------------------------------------------------------------------------------------------
-; The ENGINE RUNTIME object stores all mutable state used by the engine.
+; The engine runtime object stores all mutable state used by the engine.
 ;
 ; Design Principle:
 ;     The runtime object is the engine's single source of truth. Subsystems
@@ -73,7 +73,7 @@ if !A_IsAdmin
 ; Current ModMouse engine version.
 global MM_Version := "0.1.0-dev"
 
-; ENGINE RUNTIME container.
+; Engine runtime container.
 global MM_Runtime := {}
 
 ; Indicates whether engine initialization completed successfully.
@@ -96,7 +96,6 @@ MM_Runtime.ModifierReleased := false
 
 ; Indicates whether a mouse-button chord is currently active.
 MM_Runtime.ChordActive := false
-
 
 ; ======================================================================================================================
 ; USER CONFIGURATION
@@ -211,7 +210,7 @@ MM_ValidateConfiguration()
 ;
 ; Initialization Order:
 ;     1. Validate configuration.
-;     2. Initialize ENGINE RUNTIME.
+;     2. Initialize the engine runtime.
 ;     3. Initialize engine subsystems.
 ;     4. Register input handlers.
 ;
