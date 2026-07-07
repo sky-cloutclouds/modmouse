@@ -201,54 +201,6 @@ MM_ValidateConfiguration()
 }
 
 ; ======================================================================================================================
-; ENGINE INITIALIZATION
-; ----------------------------------------------------------------------------------------------------------------------
-; MM_Initialize()
-;
-; Description:
-;     Performs all startup tasks required before ModMouse begins accepting input.
-;
-; Initialization Order:
-;     1. Validate configuration.
-;     2. Initialize the engine runtime.
-;     3. Initialize engine subsystems.
-;     4. Register input handlers.
-;
-; Parameters:
-;     None.
-;
-; Returns:
-;     None.
-;
-; Notes:
-;     Only configuration validation is performed during Phase 1.
-; ======================================================================================================================
-
-MM_Initialize()
-{
-    MM_Log("Beginning engine initialization.")
-
-    MM_ValidateConfiguration()
-
-    MM_Runtime.Initialized := true
-
-    MM_Log("Engine initialization complete.")
-}
-
-; ======================================================================================================================
-; APPLICATION ENTRY POINT
-; ----------------------------------------------------------------------------------------------------------------------
-; The engine is initialized before any runtime logic becomes active.
-;
-; Execution remains here until every required subsystem has successfully
-; completed initialization.
-; ======================================================================================================================
-
-MM_Initialize()
-
-return
-
-; ======================================================================================================================
 ; LOGGING
 ; ----------------------------------------------------------------------------------------------------------------------
 ; MM_Log()
@@ -276,3 +228,51 @@ MM_Log(Message)
 
     OutputDebug, [ModMouse] %Message%
 }
+
+; ======================================================================================================================
+; ENGINE INITIALIZATION
+; ----------------------------------------------------------------------------------------------------------------------
+; MM_Initialize()
+;
+; Description:
+;     Performs all startup tasks required before ModMouse begins accepting input.
+;
+; Initialization Order:
+;     1. Validate configuration.
+;     2. Initialize the engine runtime.
+;     3. Initialize engine subsystems.
+;     4. Register input handlers.
+;
+; Parameters:
+;     None.
+;
+; Returns:
+;     None.
+;
+; Notes:
+;     Only configuration validation is performed during Phase 1.
+; ======================================================================================================================
+
+MM_Initialize()
+{
+    MM_Log("ModMouse " . MM_Version . " starting.")
+
+    MM_ValidateConfiguration()
+
+    MM_Runtime.Initialized := true
+
+    MM_Log("Engine initialization complete.")
+}
+
+; ======================================================================================================================
+; APPLICATION ENTRY POINT
+; ----------------------------------------------------------------------------------------------------------------------
+; The engine is initialized before any runtime logic becomes active.
+;
+; Execution remains here until every required subsystem has successfully
+; completed initialization.
+; ======================================================================================================================
+
+MM_Initialize()
+
+return
